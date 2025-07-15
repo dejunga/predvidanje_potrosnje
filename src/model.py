@@ -39,7 +39,10 @@ def train_and_forecast_arima(
     if valid is not None:
         # align valid to forecast index
         valid_aligned = valid.reindex(forecast.index)
-        rmse = np.sqrt(mean_squared_error(valid_aligned, forecast))
-        result["rmse"] = rmse
+        # Remove NaN values for RMSE calculation
+        mask = ~valid_aligned.isna()
+        if mask.sum() > 0:  # Only calculate if we have overlapping data
+            rmse = np.sqrt(mean_squared_error(valid_aligned[mask], forecast[mask]))
+            result["rmse"] = rmse
 
     return result
