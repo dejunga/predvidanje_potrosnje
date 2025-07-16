@@ -1,0 +1,22 @@
+[flake8]
+max-line-length = 88
+max-complexity = 10
+select = E,W,F
+ignore = 
+    E203,  # whitespace before ':'
+    E501,  # line too long (handled by black)
+    W503,  # line break before binary operator
+    E402,  # module level import not at top of file (for streamlit apps)
+exclude = 
+    .git,
+    __pycache__,
+    .venv,
+    venv,
+    build,
+    dist,
+    .eggs,
+    *.egg-info,
+    notebooks,
+per-file-ignores =
+    app*.py:E402
+    notebooks/*:E402,F401

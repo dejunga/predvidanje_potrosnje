@@ -1,0 +1,24 @@
+{
+  "preparation_date": "2025-07-15 21:07:37",
+  "original_data_points": 31,
+  "train_size": 24,
+  "test_size": 7,
+  "split_ratio": 0.8,
+  "date_range": "2023-01-01 00:00:00 to 2023-01-31 00:00:00",
+  "missing_values_handled": true,
+  "frequency_set": "D",
+  "features_created": [
+    "Potro\u0161nja",
+    "dan_u_tjednu",
+    "dan_u_mjesecu",
+    "mjesec",
+    "tjedan_u_godini",
+    "potro\u0161nja_lag1",
+    "potro\u0161nja_lag7",
+    "pomi\u010dni_prosjek_3d",
+    "pomi\u010dna_std_3d",
+    "pomi\u010dni_prosjek_7d",
+    "pomi\u010dna_std_7d",
+    "je_vikend"
+  ]
+}

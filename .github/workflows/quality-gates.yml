@@ -1,0 +1,232 @@
+name: Quality Gates
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  code-quality:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.11
+    
+    - name: Cache pip dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pytest-cov flake8 black isort safety bandit mypy
+    
+    - name: Code formatting check (Black)
+      run: |
+        black --check --diff src/ tests/ app*.py
+        echo "✅ Black formatting check passed"
+    
+    - name: Import sorting check (isort)
+      run: |
+        isort --check-only --diff src/ tests/ app*.py
+        echo "✅ Import sorting check passed"
+    
+    - name: Linting (flake8)
+      run: |
+        flake8 src/ tests/ app*.py
+        echo "✅ Linting check passed"
+    
+    - name: Type checking (mypy)
+      run: |
+        mypy src/ --ignore-missing-imports || echo "⚠️ Type checking completed with warnings"
+    
+    - name: Security check (bandit)
+      run: |
+        bandit -r src/ -f json -o bandit-report.json || true
+        bandit -r src/ -f txt
+        echo "✅ Security check completed"
+    
+    - name: Dependency vulnerability check (safety)
+      run: |
+        safety check --json --output safety-report.json || true
+        safety check
+        echo "✅ Dependency check completed"
+    
+    - name: Upload security reports
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: security-reports
+        path: |
+          bandit-report.json
+          safety-report.json
+
+  test-coverage:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.11
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pytest-cov
+    
+    - name: Run tests with coverage
+      run: |
+        pytest tests/ -v --cov=src --cov-report=term-missing --cov-report=xml --cov-report=html
+        echo "✅ Tests completed with coverage"
+    
+    - name: Coverage threshold check
+      run: |
+        python -c "
+        import xml.etree.ElementTree as ET
+        tree = ET.parse('coverage.xml')
+        coverage = float(tree.getroot().attrib['line-rate']) * 100
+        print(f'Coverage: {coverage:.1f}%')
+        if coverage < 80:
+            print('❌ Coverage below 80% threshold')
+            exit(1)
+        else:
+            print('✅ Coverage meets threshold')
+        "
+    
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./coverage.xml
+        flags: unittests
+        name: codecov-umbrella
+        fail_ci_if_error: false
+    
+    - name: Upload coverage reports
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: coverage-reports
+        path: |
+          coverage.xml
+          htmlcov/
+
+  performance-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.11
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pytest-benchmark memory-profiler
+    
+    - name: Run performance tests
+      run: |
+        python -c "
+        import time
+        import pandas as pd
+        import numpy as np
+        from src.model import train_and_forecast_arima
+        
+        # Generate test data
+        dates = pd.date_range('2023-01-01', periods=100, freq='D')
+        data = pd.DataFrame({
+            'Potrošnja': np.random.normal(200, 50, 100)
+        }, index=dates)
+        
+        # Performance test
+        start_time = time.time()
+        result = train_and_forecast_arima(data, order=(1, 1, 1), periods=7)
+        end_time = time.time()
+        
+        execution_time = end_time - start_time
+        print(f'Model training time: {execution_time:.2f} seconds')
+        
+        # Check performance threshold
+        if execution_time > 30:
+            print('❌ Performance test failed - took too long')
+            exit(1)
+        else:
+            print('✅ Performance test passed')
+        "
+
+  documentation-check:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Check documentation completeness
+      run: |
+        # Check required files exist
+        files=(
+          "README.md"
+          "DOCUMENTATION.md"
+          "SOURCES.md"
+          "requirements.txt"
+          "Dockerfile"
+          "docker-compose.yml"
+        )
+        
+        for file in "${files[@]}"; do
+          if [ ! -f "$file" ]; then
+            echo "❌ Missing required file: $file"
+            exit 1
+          else
+            echo "✅ Found: $file"
+          fi
+        done
+        
+        # Check README content
+        if ! grep -q "CI/CD" README.md; then
+          echo "⚠️ README.md should mention CI/CD setup"
+        fi
+        
+        echo "✅ Documentation check completed"
+
+  quality-gate-summary:
+    runs-on: ubuntu-latest
+    needs: [code-quality, test-coverage, performance-test, documentation-check]
+    if: always()
+    
+    steps:
+    - name: Quality Gate Summary
+      run: |
+        echo "🔍 Quality Gate Summary"
+        echo "======================"
+        echo "Code Quality: ${{ needs.code-quality.result }}"
+        echo "Test Coverage: ${{ needs.test-coverage.result }}"
+        echo "Performance: ${{ needs.performance-test.result }}"
+        echo "Documentation: ${{ needs.documentation-check.result }}"
+        
+        if [ "${{ needs.code-quality.result }}" == "success" ] && \
+           [ "${{ needs.test-coverage.result }}" == "success" ] && \
+           [ "${{ needs.performance-test.result }}" == "success" ] && \
+           [ "${{ needs.documentation-check.result }}" == "success" ]; then
+          echo "✅ All quality gates passed!"
+        else
+          echo "❌ Some quality gates failed"
+          exit 1
+        fi

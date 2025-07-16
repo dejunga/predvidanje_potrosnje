@@ -1,0 +1,48 @@
+Zadatak: Aplikacija za predviđanje potrošnje
+Cilj
+Napravite jednostavnu aplikaciju koja predviđa buduću potrošnju na temelju povijesnih podataka.
+Potičemo vas da implementirate jedan od statističkih modela tipa ARIMA (AutoRegressive Integrated
+Moving Average), MA (Moving Average), Prophet ili nešto treće po izboru.
+Zahtjevi
+Unos podataka
+Aplikacija bi trebala prihvatiti skup podataka koji sadrži povijesne podatke o potrošnji s odgovarajućim
+datumima (npr. CSV datoteka).
+Primjer formata:
+Datum, Potrošnja
+2023-01-01, 150
+2023-01-02, 200
+...
+Implementacija modela
+Implementirajte model za analizu podataka i izradu budućih predviđanja.
+Omogućite korisniku mogućnosti odabira parametara za ARIMA model (p, d, q), neobavezno
+Korisničko sučelje
+Razvijte minimalno korisničko sučelje koristeći framework po vašem izboru (npr. Flask, Streamlit,
+jednostavnu web-aplikaciju ili JupiterLab).
+Korisničko sučelje trebalo bi omogućiti korisnicima sljedeće:
+Učitajte njihov skup podataka.
+Pogledajte povijesne podatke o potrošnji.
+Odabir budućeg razdoblja.
+Konfigurirajte parametre modela, neobavezno
+Prikaz predviđene buduće potrošnje.
+Izlaz
+Prikažite predviđene vrijednosti zajedno s vizualizacijom povijesnih i predviđenih podataka (npr. linijski
+grafikon).
+Navedite sažetak izvedbe modela (npr. RMSE, AIC), neobavezno.
+Dokumentacija
+Pripremite kratko izvješće koje uključuje:
+Opis vašeg pristupa i korištenog modela.
+Plan vašeg rada, uključujući vremenske rokove za svaku fazu izrade aplikacije.
+Objašnjenje kako ćete procijeniti izvedbu modela.
+Korištenje vanjskih izvora
+Dopušteno vam je koristiti vanjske biblioteke (kao što su pandas, statsmodels, matplotlib itd.) i
+proučavati postojeći kod iz javnih repozitorija (npr. GitHub) kao reference. Također slobodno koristite
+ChatGPT ili slično.
+Molimo navedite sve korištene izvore.
+Prezentacija
+Predstavite svoju aplikaciju i nalaze u 10-minutnoj demonstraciji, uključujući pregled vašeg koda i
+postupak donošenja odluka.
+Kriteriji ocjenjivanja
+Ispravnost i učinkovitost implementiranog modela.
+Kvaliteta i upotrebljivost korisničkog sučelja.
+Jasnoća i temeljitost dokumentacije.
+Kreativnost u rješavanju zadatka i pristup rješavanju problema.

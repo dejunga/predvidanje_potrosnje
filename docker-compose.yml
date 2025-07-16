@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  # Production service
+  consumption-forecast:
+    build: .
+    ports:
+      - "8501:8501"
+    environment:
+      - PYTHONPATH=/app
+    volumes:
+      - ./data:/app/data:ro  # Read-only data mount
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:8501/_stcore/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+
+  # Development service with hot reloading
+  consumption-forecast-dev:
+    build: .
+    ports:
+      - "8502:8501"  # Different port for dev
+    environment:
+      - PYTHONPATH=/app
+      - STREAMLIT_SERVER_RUN_ON_SAVE=true
+      - STREAMLIT_SERVER_FILE_WATCHER_TYPE=poll
+    volumes:
+      - .:/app  # Mount entire project for hot reloading
+      - /app/__pycache__  # Exclude pycache
+      - /app/.git  # Exclude git
+    command: >
+      streamlit run app_enhanced.py
+      --server.port=8501
+      --server.address=0.0.0.0
+      --server.headless=true
+      --server.enableCORS=false
+      --server.enableXsrfProtection=false
+      --server.runOnSave=true
+      --server.fileWatcherType=poll
+    profiles:
+      - dev

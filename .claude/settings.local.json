@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__ide__getDiagnostics",
+      "mcp__ide__executeCode",
+      "Bash(docker build:*)",
+      "Bash(docker-compose up:*)",
+      "Bash(docker run:*)",
+      "Bash(docker stop:*)",
+      "Bash(run-dev.bat)",
+      "Bash(docker rm:*)",
+      "Bash(docker rename:*)"
+    ],
+    "deny": []
+  }
+}

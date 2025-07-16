@@ -1,0 +1,38 @@
+{
+    "historical_consumption.csv": {
+        "name": "📊 Mixed Pattern Data",
+        "description": "General consumption data with mixed patterns - good for basic testing",
+        "characteristics": ["Mixed trends", "90 days", "Moderate variability"],
+        "difficulty": "Easy"
+    },
+    "sample_retail_consumption.csv": {
+        "name": "🛍️ Retail Store Consumption",
+        "description": "Retail store energy consumption with weekend drops and seasonal patterns",
+        "characteristics": ["Weekend patterns", "Seasonal trends", "Business hours influence"],
+        "difficulty": "Medium"
+    },
+    "sample_industrial_consumption.csv": {
+        "name": "🏭 Industrial Plant Consumption",
+        "description": "Industrial facility with high consumption and Sunday shutdowns",
+        "characteristics": ["Weekly shutdowns", "High baseline", "Predictable patterns"],
+        "difficulty": "Easy"
+    },
+    "sample_seasonal_consumption.csv": {
+        "name": "🌡️ Seasonal Heating/Cooling",
+        "description": "HVAC consumption showing strong seasonal growth pattern",
+        "characteristics": ["Strong seasonality", "Upward trend", "Weather dependent"],
+        "difficulty": "Medium"
+    },
+    "sample_volatile_consumption.csv": {
+        "name": "⚡ Volatile Energy Usage",
+        "description": "Highly variable consumption - challenging for forecasting models",
+        "characteristics": ["High volatility", "Irregular patterns", "Forecasting challenge"],
+        "difficulty": "Hard"
+    },
+    "sample_growing_consumption.csv": {
+        "name": "📈 Growing Business Consumption",
+        "description": "Startup/growing business with steady upward consumption trend",
+        "characteristics": ["Linear growth", "Low variability", "Predictable trend"],
+        "difficulty": "Easy"
+    }
+}
