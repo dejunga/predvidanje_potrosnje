@@ -456,10 +456,15 @@ with tab2:
         st.info(f"📊 Split: {len(train)} training days, {len(valid)} validation days")
         
         st.subheader("🔮 Forecast Parameters")
+        
+        # Show validation set info
+        if len(valid) > 0:
+            st.info(f"📊 Validation set has {len(valid)} days available for evaluation")
+        
         periods = st.number_input(
             "Days to forecast", 
-            min_value=1, max_value=60, value=7,
-            help="Number of future days to predict"
+            min_value=1, max_value=60, value=min(7, len(valid)) if len(valid) > 0 else 7,
+            help="Number of future days to predict. For validation metrics, this will be compared against available validation data."
         )
         
     with col2:
@@ -564,9 +569,17 @@ with tab3:
     st.subheader("📈 Performance Metrics")
     
     if len(valid) > 0:
-        # Calculate metrics on validation set
-        val_forecast = forecast[:len(valid)]
-        metrics = calculate_metrics(valid['Potrošnja'], val_forecast)
+        # Calculate metrics on validation set - align validation data with forecast
+        # Take only the overlapping portion
+        min_length = min(len(valid), len(forecast))
+        val_actual = valid['Potrošnja'].iloc[:min_length]
+        val_forecast = forecast.iloc[:min_length]
+        
+        # Show information about the evaluation
+        if len(valid) != len(forecast):
+            st.info(f"📊 Evaluation: Using {min_length} days (min of {len(valid)} validation days and {len(forecast)} forecast days)")
+        
+        metrics = calculate_metrics(val_actual, val_forecast)
         
         col1, col2, col3, col4 = st.columns(4)
         with col1:
