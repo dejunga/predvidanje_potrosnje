@@ -1,0 +1,33 @@
+# Core dependencies for the consumption forecast application
+# Compatible with Python 3.9+
+
+# Data processing
+pandas>=2.0.0
+numpy>=1.21.0,<1.27.0
+
+# Statistical modeling
+statsmodels>=0.13.0
+scikit-learn>=1.1.0
+scipy>=1.9.0,<1.12.0
+
+# Web application
+streamlit>=1.35.0
+
+# Visualization
+plotly>=5.0.0
+matplotlib>=3.5.0
+
+# Optional: Prophet for comparison
+prophet>=1.1.0
+
+# Testing (dev dependencies)
+pytest>=7.0.0
+pytest-cov>=4.0.0
+
+# Code quality (dev dependencies)
+black>=22.0.0
+flake8>=5.0.0
+isort>=5.0.0
+bandit>=1.7.0
+safety>=2.0.0
+mypy>=1.0.0

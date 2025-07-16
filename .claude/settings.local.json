@@ -9,7 +9,8 @@
       "Bash(docker stop:*)",
       "Bash(run-dev.bat)",
       "Bash(docker rm:*)",
-      "Bash(docker rename:*)"
+      "Bash(docker rename:*)",
+      "Bash(git add:*)"
     ],
     "deny": []
   }
